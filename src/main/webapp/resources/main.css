@@ -1,0 +1,78 @@
+.navbar {
+    background-color: dodgerblue !important;
+}
+
+nav{
+    background-color: dodgerblue;
+}
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+	font-family: 'Roboto Condensed', Roboto, Arial, sans-serif;
+	color: #241023;
+	margin-bottom: 60px;
+    background-size: 100%;
+    background-image: url("/resources/abstract-1780368_960_720.png");
+}
+
+ul {
+    color: black;
+}
+body > .container {
+  padding: 30px 15px 0;
+}
+
+h1 {
+	color: dodgerblue;
+}
+
+h2 {
+	color: dodgerblue;
+}
+
+a:link {
+	color: black;
+}
+
+a:visited {
+	color: black;
+}
+
+a:hover {
+	color: #241023;
+}
+
+a:hover {
+	color: #5a788a;
+}
+
+.list-group-item {
+	padding: 0.25rem 1.25rem;
+}
+.whitebg{
+	background-color: #F7F4EA;
+}
+
+.confade {
+	border-style: solid;
+    border-width: 1px;
+    border-color: #ced4da;
+    border-radius: .25rem;
+    background: #F7F4EA;
+}
+
+.btncol {
+	background-color: #5FBFF9;
+    color: #F7F4EA;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    font-weight: bold;
+}
+
+.error {
+	color: red;
+}

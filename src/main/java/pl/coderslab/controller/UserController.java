@@ -3,69 +3,86 @@ package pl.coderslab.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import pl.coderslab.entity.Role;
+import pl.coderslab.entity.Project;
+import pl.coderslab.entity.Task;
 import pl.coderslab.entity.User;
-import pl.coderslab.repository.RoleRepository;
+import pl.coderslab.repository.TaskRepository;
 import pl.coderslab.repository.UserRepository;
 
-import javax.validation.Valid;
-import javax.validation.Validator;
+import javax.servlet.http.HttpSession;
 import java.util.List;
+import java.util.Set;
 
 @Controller
-@RequestMapping("/user")
+@RequestMapping(path = "/user")
 public class UserController {
 
-    @Autowired
-    Validator validator;
-    @Autowired
-    UserRepository userRepository;
-    @Autowired
-    RoleRepository roleRepository;
-
-    @GetMapping("")
-    public String showAall(Model model){
-        model.addAttribute("users", userRepository.findAll());
-        return "user/list";
-    }
-
-    @GetMapping("/add")
-    public String addUser(Model model){
-        model.addAttribute("user", new User());
-        return "user/form";
-    }
-
-    @PostMapping("/add")
-    public String addUser(@Valid User user, BindingResult result){
-        if (result.hasErrors()) {
-            return "user/form";
-        }
-        userRepository.save(user);
-        return "redirect:/user";
-    }
-
-    @GetMapping("/deleteConfirm/{id}")
-    public String deleteUser(@PathVariable Long id, Model model) {
-        model.addAttribute("id", id);
-        return "/user/confirmDelete";
-    }
-    @GetMapping("/delete/{id}")
-    public String deleteUser(@PathVariable long id){
-        User user = userRepository.findOne(id);
-        userRepository.delete(user);
-        return "/user/deleted";
-    }
+	@Autowired
+	private UserRepository userRepo;
+	
+	@Autowired
+	private TaskRepository taskRepo;
 
 
-    @ModelAttribute("usersmodel")
-    public List<User> modelUser(){
-        return userRepository.findAll();
-    }
-    @ModelAttribute("roles")
-    public List<Role> modelRole(){
-        return roleRepository.findAll();
-    }
+	@GetMapping(path = "")
+	public String userMainPage(Model model, HttpSession session, @RequestParam(name = "par", required = false) String msg) {
+		if (msg != null) {
+			if (msg.equals("succPass")) {
+				model.addAttribute("message", "You have successfully changed Your password");
+			}
+			if (msg.equals("editSucc")) {
+				model.addAttribute("message", "You have successfully edited user's data!");
+			}
+//
+		}
+		long loggedUserId = (long) session.getAttribute("loggedUser");
+		User loggedUser = userRepo.findOne(loggedUserId);
+		model.addAttribute("currentUser", loggedUser);
+		Set<Project> userProjects = loggedUser.getProjects();
+		model.addAttribute("myProjects", userProjects);
+		List<Task> userTasks = taskRepo.findByActiveUserId(loggedUserId);
+		model.addAttribute("myTasks", userTasks);
+		return "user/main";
+	}
+	
+	@GetMapping(path = "/myProjects")
+	public String UserProjects(Model model, HttpSession session) {
+		long loggedUserId = (long) session.getAttribute("loggedUser");
+		User loggedUser = userRepo.findOne(loggedUserId);
+		model.addAttribute("currentUser", loggedUser);
+		Set<Project> userProjects = loggedUser.getProjects();
+		model.addAttribute("myProjects", userProjects);
+		return "user/myProjects";
+	}
+	
+	@GetMapping(path = "/myTasks")
+	public String UserTask(Model model, HttpSession session) {
+		long loggedUserId = (long) session.getAttribute("loggedUser");
+		User loggedUser = userRepo.findOne(loggedUserId);
+		model.addAttribute("currentUser", loggedUser);
+		List<Task> userTasks = taskRepo.findByActiveUserId(loggedUserId);
+		model.addAttribute("myTasks", userTasks);
+		return "user/myTasks";
+	}
+
+	@GetMapping(path = "/edit")
+	public String editUser(Model model, HttpSession session) {
+		long loggedUserId = (long) session.getAttribute("loggedUser");
+		User userToEdit = userRepo.findOne(loggedUserId);
+		model.addAttribute("user", userToEdit);
+		return "user/edit";
+	}
+
+	@PostMapping(path = "/edit")
+	public String editUserPost(@ModelAttribute User user, Model model, HttpSession session) {
+		model.addAttribute("par", "editSucc");
+		long loggedUserId = (long) session.getAttribute("loggedUser");
+		User merged = userRepo.findOne(loggedUserId);
+		merged.mergeFromEdit(user);
+		userRepo.save(merged);
+		return "redirect:/user";
+	}
+
 
 }

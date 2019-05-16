@@ -1,65 +1,60 @@
 package pl.coderslab.entity;
 
+import org.hibernate.annotations.DynamicUpdate;
+
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "priority")
+@Table(name = "priorities")
+@DynamicUpdate
 public class Priority {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private long id;
 
-    private String name;
+	private String name;
 
-    private boolean active;
+	private boolean isActive;
 
-    @OneToMany(mappedBy = "priority")
-    private List<Task> tasks;
+	@OneToMany(mappedBy = "priority")
+	private List<Task> tasks;
 
-    public Priority(){
+	public Priority() {
+		super();
+	}
 
-    }
+	public long getId() {
+		return id;
+	}
 
-    public Long getId() {
-        return id;
-    }
+	public void setId(long id) {
+		this.id = id;
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public boolean isActive() {
+		return isActive;
+	}
 
-    public boolean isActive() {
-        return active;
-    }
+	public void setActive(boolean isActive) {
+		this.isActive = isActive;
+	}
 
-    public void setActive(boolean active) {
-        this.active = active;
-    }
+	public List<Task> getTasks() {
+		return tasks;
+	}
 
-    public List<Task> getTasks() {
-        return tasks;
-    }
+	public void setTasks(List<Task> tasks) {
+		this.tasks = tasks;
+	}
 
-    public void setTasks(List<Task> tasks) {
-        this.tasks = tasks;
-    }
-
-    @Override
-    public String toString() {
-        return "Priority{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", active=" + active +
-                '}';
-    }
 }
